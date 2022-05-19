@@ -55,7 +55,7 @@ from threading import Thread
 #             np.array(high, dtype=np.float32),
 #             dtype=np.float32,
 #         )
-    
+
 server_config = ServerConfiguration(
     "ps:8000",
     "authentication-endpoint.com/action.php?"
@@ -63,9 +63,11 @@ server_config = ServerConfiguration(
 
 POKE_LOOP = asyncio.new_event_loop()
 
+
 class RandomGen8EnvPlayer(Gen8EnvSinglePlayer):
     def embed_battle(self, battle):
         return np.array([0])
+
     def describe_embedding(self):
         low = [-1, -1, -1, -1, 0, 0, 0, 0, 0, 0]
         high = [3, 3, 3, 3, 4, 4, 4, 4, 1, 1]
@@ -74,30 +76,35 @@ class RandomGen8EnvPlayer(Gen8EnvSinglePlayer):
             np.array(high, dtype=np.float32),
             dtype=np.float32,
         )
+
     def calc_reward(self, last_battle, current_battle) -> float:
         return self.reward_computing_helper(
             current_battle, fainted_value=2.0, hp_value=1.0, victory_value=30.0
         )
+
 
 def env_algorithm(player, n_battles):
     for _ in range(n_battles):
         done = False
         player.reset()
         while not done:
-            _, _, done, _ = player.step(np.random.choice(player.action_space.n))
+            _, _, done, _ = player.step(
+                np.random.choice(player.action_space))
 
 
 def to_id_str(name):
     return "".join(char for char in name if char.isalnum()).lower()
 
+
 async def launch_battles(player, opponent):
     battles_coroutine = asyncio.gather(
-        player.agent.send_challenges(
+        player.send_challenges(
             opponent=to_id_str(opponent.username),
             n_challenges=1,
             to_wait=opponent.logged_in,
         ),
-        opponent.agent.accept_challenges(opponent=to_id_str(player.username), n_challenges=1),
+        opponent.accept_challenges(opponent=to_id_str(
+            player.username), n_challenges=1),
     )
     await battles_coroutine
 

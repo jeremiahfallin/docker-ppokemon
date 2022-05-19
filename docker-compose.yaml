@@ -12,6 +12,6 @@ services:
     build:
       context: .
       dockerfile: ./showdown/Dockerfile
-    container_name: showdown
+    container_name: ps
     ports:
       - "8000:8000"

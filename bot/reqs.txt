@@ -2,4 +2,3 @@ poke_env
 numpy
 keras-rl
 tensorflow
--e git+https://github.com/hsahovic/poke-env.git#egg=poke_env
